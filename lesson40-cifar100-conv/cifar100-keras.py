@@ -14,10 +14,7 @@ def preprocess(x, y):
     y = tf.cast(y, dtype=tf.int32)
     return x, y
 
-# cifar100 下载较慢，你可以手动下载然后放到  ~/.keras/datasets 里面去
 (x, y), (x_test, y_test) = datasets.cifar100.load_data()
-
-print(x.shape, y.shape)
 
 train_db = tf.data.Dataset.from_tensor_slices((x, y))
 train_db = train_db.shuffle(1000).map(preprocess).batch(128)
@@ -49,7 +46,8 @@ network = Sequential([
     layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"), # 1x1
 
     # 转换形状
-    layers.Reshape((-1, 512), input_shape=(-1, 1, 1, 512)), # 这里加一个 Reshape层就好啦
+    # layers.Reshape((-1, 512), input_shape=(-1, 1, 1, 512)), # 这里加一个 Reshape层就好啦
+    layers.Flatten(),
 
     layers.Dense(256, activation=tf.nn.relu),
     layers.Dense(128, activation=tf.nn.relu),
@@ -60,11 +58,15 @@ network.build(input_shape=[None, 32, 32, 3])
 network.summary()
 
 # 用 keras 的高层API直接训练
-network.compile(
-    optimizer=optimizers.Adam(lr=1e-4),
-    loss=tf.losses.categorical_crossentropy, # MSE 是个对象， CategoricalCrossentropy 是个类
-    metrics=['accuracy']
-)
+#network.compile(
+#    optimizer=optimizers.Adam(lr=1e-4),
+#    loss=tf.losses.categorical_crossentropy, # MSE 是个对象， CategoricalCrossentropy 是个类
+#    metrics=['accuracy']
+#)
+
+network.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])
 
 network.fit(train_db, epochs=10, validation_data=test_db, validation_freq=2)
 network.save('./model.h5')

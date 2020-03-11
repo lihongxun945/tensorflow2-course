@@ -50,7 +50,8 @@ network = Sequential([
     layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"),
 
     # 转换形状
-    layers.Reshape((-1, 64), input_shape=(None, 1, 1, 64)), # 这里加一个 Reshape层就好啦
+    # layers.Reshape((-1, 64), input_shape=(None, 1, 1, 64)), # 这里加一个 Reshape层就好啦
+    layers.Flatten(),
 
     layers.Dense(32, activation=tf.nn.relu),
     layers.Dense(16, activation=tf.nn.relu),
