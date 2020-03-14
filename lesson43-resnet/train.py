@@ -27,7 +27,7 @@ test_db = test_db.map(preprocess).batch(256)
 
 def main():
     # [b, 32, 32, 3] => [b, 1, 1, 512]
-    model = resnet34()
+    model = resnet10()
     model.build(input_shape=(None, 32, 32, 3)) # 这里input_shape 用 [] 就会报错，不知道为啥
     model.summary()
     optimizer = optimizers.Adam(1e-4)

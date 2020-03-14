@@ -25,23 +25,23 @@ test_db = test_db.map(preprocess).batch(64)
 conv_layers = [
     layers.Conv2D(64, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
     layers.Conv2D(64, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
-    layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"),
+    layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"), # 16x16
 
     layers.Conv2D(128, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
     layers.Conv2D(128, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
-    layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"),
+    layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"), # 8x8
 
     layers.Conv2D(256, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
     layers.Conv2D(256, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
-    layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"),
+    layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"), #4x4
 
     layers.Conv2D(512, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
     layers.Conv2D(512, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
-    layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"),
+    layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"), #2x2
 
     layers.Conv2D(512, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
     layers.Conv2D(512, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
-    layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"),
+    layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"), # 1x1
 ]
 
 # 老师为了讲解算法，这里分成了两个网络，把reshape的过程手动计算了，其实完全可以用一个reshape层就行了，直接调用keras API训练，参见另一个文件 cifar100-keras

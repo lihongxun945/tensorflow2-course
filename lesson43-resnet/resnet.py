@@ -56,14 +56,14 @@ class ResNet(keras.Model):
 
         # 四层 resblock
         self.layer1 = self.build_resblock(64, layer_dims[0])
-        self.layer2 = self.build_resblock(128, layer_dims[0], strides=2)
-        self.layer3 = self.build_resblock(256, layer_dims[0], strides=2)
-        self.layer4 = self.build_resblock(512, layer_dims[0], strides=2)
+        self.layer2 = self.build_resblock(128, layer_dims[1], strides=2)
+        self.layer3 = self.build_resblock(256, layer_dims[2], strides=2)
+        self.layer4 = self.build_resblock(512, layer_dims[3], strides=2)
 
         # 输出层，到这一层处理前，形状是 [b, 512, h, w]，
         # 我们经过3次strides=2 处理，结果形状应该被缩小到 1/8，如果输入是 (32, 32) 那么到这里就是 (4,4)，而我们需要h w变成 (1, 1),
         # 因此加一个平均层，无论最后(h,w)值如何，都会被取一个平均值而缩减到(1,1)，比如如果是 (4,4) 那么就取所有16个值的平均值
-        self.avgpool = layers.GlobalAveragePooling2D() #
+        self.avgpool = layers.Flatten() #
         self.fc = layers.Dense(num_classes) # 全连接层输出结果
 
     def call(self, inputs, training=None):
@@ -98,3 +98,6 @@ def resnet18():
 
 def resnet34():
     return ResNet([3, 4, 6, 3])
+
+def resnet48():
+    return ResNet([4, 4, 4, 4, 4, 2])

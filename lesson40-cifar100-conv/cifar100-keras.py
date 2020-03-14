@@ -24,26 +24,23 @@ test_db = test_db.map(preprocess).batch(64)
 
 # 卷积层取特征
 # maxpool层强化特征并且把图片尺寸减小一半
+# 这里如果还是两层conv2d就会无法收敛
 network = Sequential([
     layers.Conv2D(64, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
     layers.Conv2D(64, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
-    layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"), # 16x16
+    layers.MaxPool2D([2, 2]), # 16x16, stride 默认就是卷积核的大小
 
     layers.Conv2D(128, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
     layers.Conv2D(128, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
-    layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"), # 8x8
+    layers.MaxPool2D([2, 2]), # 8x8
 
     layers.Conv2D(256, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
     layers.Conv2D(256, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
-    layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"), # 4x4
+    layers.MaxPool2D([2, 2]), # 4x4
 
     layers.Conv2D(512, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
     layers.Conv2D(512, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
-    layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"), # 2x2
-
-    layers.Conv2D(512, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
-    layers.Conv2D(512, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
-    layers.MaxPool2D(pool_size=[2, 2], strides=2, padding="same"), # 1x1
+    layers.MaxPool2D([2, 2]), # 2x2
 
     # 转换形状
     # layers.Reshape((-1, 512), input_shape=(-1, 1, 1, 512)), # 这里加一个 Reshape层就好啦
@@ -68,5 +65,5 @@ network.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-network.fit(train_db, epochs=10, validation_data=test_db, validation_freq=2)
+network.fit(train_db, epochs=20, validation_data=test_db, validation_freq=2)
 network.save('./model.h5')

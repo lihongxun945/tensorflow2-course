@@ -19,23 +19,32 @@ def preprocess(x, y):
 print(x.shape, y.shape)
 
 train_db = tf.data.Dataset.from_tensor_slices((x, y))
-train_db = train_db.shuffle(1000).map(preprocess).batch(128)
+train_db = train_db.shuffle(1000).map(preprocess).batch(256)
 
 test_db = tf.data.Dataset.from_tensor_slices((x_test, y_test))
-test_db = test_db.map(preprocess).batch(64)
+test_db = test_db.map(preprocess).batch(256)
 
-model = Sequential()
-model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
-model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+# 这个模型大约是70%正确率
+model = Sequential([
+    layers.Conv2D(32, (3, 3), activation='relu', padding="same", input_shape=(32, 32, 3)),
+    layers.Conv2D(32, (3, 3), activation='relu', padding="same"),
+    layers.MaxPooling2D((2, 2)), # 16x16
+    layers.Conv2D(64, (3, 3), activation='relu', padding="same"),
+    layers.Conv2D(64, (3, 3), activation='relu', padding="same"),
+    layers.MaxPooling2D((2, 2)), # 8x8
+    layers.Conv2D(128, (3, 3), activation='relu', padding="same"),
+    layers.Conv2D(128, (3, 3), activation='relu', padding="same"),
+    layers.MaxPooling2D((2, 2)), # 4x4
+    layers.Conv2D(256, (3, 3), activation='relu', padding="same"),
+    layers.Conv2D(256, (3, 3), activation='relu', padding="same"),
+    layers.MaxPooling2D((2, 2)), # 2x2
 
-model.add(layers.Flatten())
-model.add(layers.Dense(64, activation='relu'))
-model.add(layers.Dense(10))
-
-model.compile(optimizer='adam',
+    layers.Flatten(),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(10)
+])
+model.summary()
+model.compile(optimizer=optimizers.Adam(lr=1e-4),
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 

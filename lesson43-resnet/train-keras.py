@@ -3,7 +3,7 @@
 
 import tensorflow as tf
 from tensorflow.keras import layers, optimizers, datasets, Sequential
-from resnet import resnet10, resnet18
+from resnet2 import ResNet
 
 gpu = tf.config.list_physical_devices('GPU')
 if len(gpu) > 0:
@@ -17,18 +17,18 @@ def preprocess(x, y):
 
 # cifar100 下载较慢，你可以手动下载然后放到  ~/.keras/datasets 里面去
 (x, y), (x_test, y_test) = datasets.cifar100.load_data()
-
+print(x.shape, y.shape)
+y = tf.squeeze(y, axis=1) # [n, 1] => [n]
+y_test = tf.squeeze(y_test, axis=1) # [n, 1] => [n]
 print(x.shape, y.shape)
 
 train_db = tf.data.Dataset.from_tensor_slices((x, y))
-train_db = train_db.shuffle(1000).map(preprocess).batch(128)
+train_db = train_db.shuffle(1000).map(preprocess).batch(256)
 
 test_db = tf.data.Dataset.from_tensor_slices((x_test, y_test))
-test_db = test_db.map(preprocess).batch(64)
+test_db = test_db.map(preprocess).batch(256)
 
-# 卷积层取特征
-# maxpool层强化特征并且把图片尺寸减小一半
-network = resnet10()
+network = ResNet(100)
 
 network.build(input_shape=(None, 32, 32, 3))
 network.summary()
@@ -36,9 +36,8 @@ network.summary()
 # 用 keras 的高层API直接训练
 network.compile(
     optimizer=optimizers.Adam(lr=1e-4),
-    loss=tf.losses.categorical_crossentropy, # MSE 是个对象， CategoricalCrossentropy 是个类
+    loss=tf.losses.CategoricalCrossentropy(from_logits=True), # MSE 是个对象， CategoricalCrossentropy 是个类
     metrics=['accuracy']
 )
 
-network.fit(train_db, epochs=10, validation_data=test_db, validation_freq=2)
-network.save('./model.h5')
+network.fit(train_db, epochs=20, validation_data=test_db, validation_freq=2)
