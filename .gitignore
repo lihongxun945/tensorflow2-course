@@ -1,5 +1,11 @@
 .idea
 *.swp
 *.h5
+*.pyc
 __pycache__
+
+
+course1/lesson51-gan/faces/*
+course1/lesson51-gan/images/*
+
 
