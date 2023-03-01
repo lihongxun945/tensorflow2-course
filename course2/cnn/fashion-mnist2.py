@@ -10,24 +10,24 @@ train_images = np.expand_dims(train_images, -1)
 test_images= np.expand_dims(test_images, -1)
 
 model = tf.keras.Sequential([
-    tf.keras.layers.Conv2D(64, (3, 3), input_shape=(28, 28, 1), activation='relu', padding='same'), # (None, 28, 28, 32)
-    tf.keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
-    tf.keras.layers.MaxPooling2D(),
+    tf.keras.layers.Conv2D(64, (3, 3), input_shape=(28, 28, 1), activation='relu', padding='same'), # (None, 28, 28, 64)
+    tf.keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same'), # (None, 28, 28, 64)
+    tf.keras.layers.MaxPooling2D(), # (None, 14, 14, 64)
     tf.keras.layers.Dropout(0.5),
-    tf.keras.layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
-    tf.keras.layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
-    tf.keras.layers.MaxPooling2D(),
+    tf.keras.layers.Conv2D(128, (3, 3), activation='relu', padding='same'), # (None, 14, 14, 128)
+    tf.keras.layers.Conv2D(128, (3, 3), activation='relu', padding='same'), # (None, 14, 14, 128)
+    tf.keras.layers.MaxPooling2D(), # (None, 7, 7, 128)
     tf.keras.layers.Dropout(0.5),
-    tf.keras.layers.Conv2D(256, (3, 3), activation='relu', padding='same'),
-    tf.keras.layers.Conv2D(256, (3, 3), activation='relu', padding='same'),
-    tf.keras.layers.MaxPooling2D(),
+    tf.keras.layers.Conv2D(256, (3, 3), activation='relu', padding='same'), # (None, 7, 7, 256)
+    tf.keras.layers.Conv2D(256, (3, 3), activation='relu', padding='same'), # (None, 7, 7, 256)
+    tf.keras.layers.MaxPooling2D(), # (None, 3, 3, 256)
     tf.keras.layers.Dropout(0.5),
-    tf.keras.layers.Conv2D(512, (3, 3), activation='relu', padding='same'),
-    tf.keras.layers.Conv2D(512, (3, 3), activation='relu', padding='same'),
+    tf.keras.layers.Conv2D(512, (3, 3), activation='relu', padding='same'), # (None, 3, 3, 512)
+    tf.keras.layers.Conv2D(512, (3, 3), activation='relu', padding='same'), # (None, 3, 3, 512)
     tf.keras.layers.Dropout(0.5),
-    tf.keras.layers.GlobalAveragePooling2D(),
-    tf.keras.layers.Dense(256, activation='relu'), #
-    tf.keras.layers.Dense(10, activation='softmax'), #
+    tf.keras.layers.GlobalAveragePooling2D(), # (None, 512) ，注意这里和flatten作用类似
+    tf.keras.layers.Dense(256, activation='relu'), # (None, 256)
+    tf.keras.layers.Dense(10, activation='softmax'), # (None, 10)
 ])
 model.summary()
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['acc'])
