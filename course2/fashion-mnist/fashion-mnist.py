@@ -1,6 +1,4 @@
 import tensorflow as tf
-import pandas as pd
-import matplotlib.pyplot as plt
 
 (train_image, train_label), (test_image, test_label) = tf.keras.datasets.fashion_mnist.load_data()
 # 把每个像素点 0~255归一化为 0~1
