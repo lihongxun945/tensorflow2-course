@@ -2,6 +2,7 @@
 *.swp
 *.h5
 *.pyc
+course2/**/*.jpg
 __pycache__
 
 

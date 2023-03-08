@@ -6,7 +6,7 @@ import numpy as np
 import glob
 import random
 
-all_image_path = glob.glob('./images/*/*.png')
+all_image_path = glob.glob('./images/*/*.jpg')
 random.shuffle(all_image_path)
 print(all_image_path)
 label_to_index = {'airplane': 0,  'lake': 1}
