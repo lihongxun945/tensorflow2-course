@@ -12,8 +12,11 @@ model = tf.keras.Sequential([
 model.summary()
 
 model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=['acc'])
-history = model.fit(train_image, train_label, epochs=5)
+# 训练过程中保存
+cp = tf.keras.callbacks.ModelCheckpoint('cp', save_weights_only=True)
+history = model.fit(train_image, train_label, epochs=5, callbacks=[cp])
 model.evaluate(test_image, test_label)
+
 # 保存模型结构、权重、优化器的等所有数据
 # h5格式，单文件
 model.save('./all_model.h5')
